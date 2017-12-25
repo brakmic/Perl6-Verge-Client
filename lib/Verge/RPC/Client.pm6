@@ -4,7 +4,7 @@ our $VERSION = '1.0';
 
 use v6;
 use WWW;
-use JSON::Tiny;
+use JSON::Fast;
 use URI::Escape;
 use LWP::Simple;
 use Base64::Native;
@@ -41,29 +41,36 @@ class Client is export {
       when 'backupwallet' {
         return $.backupwallet(@params[0]);
       }
+      when 'getblock' {
+        return $.getblock(@params);
+      }
     };
   }
   # API: get transaction information
   method gettransaction(Str $tx-hash) returns Str {
-    my @method_parms = $tx-hash;
-    my %params =
-     'version' => '1.1',
-     'method' => 'gettransaction',
-     'params' => @method_parms,
-     'id' => $!call_counter++
-    ;
-    return LWP::Simple.new.post($!api, self!get_request_headers(), to-json(%params));
+    my @params = $tx-hash;
+    return LWP::Simple.new.post($!api, self!get_request_headers(),
+              to-json(self!get_request_parameters('gettransaction', @params)));
   }
   # API: creates a wallet backup (path can either be a full path or just a dir)
   method backupwallet(Str $backup_path) returns Str {
-    my @method_parms = $backup_path;
+    my @params = $backup_path;
+    return LWP::Simple.new.post($!api, self!get_request_headers(),
+                to-json(self!get_request_parameters('backupwallet', @params)));
+  }
+  method getblock(Str @params) returns Str {
+    return LWP::Simple.new.post($!api, self!get_request_headers(),
+                    to-json(self!get_request_parameters('getblock', @params)));
+  }
+  method !get_request_parameters(Str $method, Str @method_params) {
     my %params =
      'version' => '1.1',
-     'method' => 'backupwallet',
-     'params' => @method_parms,
+     'method' => $method,
+     'params' => @method_params,
      'id' => $!call_counter++
     ;
-    return LWP::Simple.new.post($!api, self!get_request_headers(), to-json(%params));
+    say %params;
+    return %params;
   }
   # componses HTTP call headers
   method !get_request_headers() {
