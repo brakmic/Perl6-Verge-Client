@@ -6,7 +6,7 @@
     "description"  : "query Verge transactions, wallet info and more",
     "depends"      : [
         "WWW",
-        "JSON::Tiny",
+        "JSON::Fast",
         "LWP::Simple",
         "Base64::Native",
         "Data::Dump"
