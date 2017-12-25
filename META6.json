@@ -16,5 +16,5 @@
         "Verge::RPC::Client": "lib/Verge/RPC/Client.pm6"
     },
     "authors"      : [ "Harris Brakmic" ],
-    "support"      : { "source"   : "git://github.com/brakmic/Perl6-Bitcoin-Client.git" }
+    "support"      : { "source"   : "git://github.com/brakmic/Perl6-Verge-Client.git" }
 }
