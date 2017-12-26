@@ -9,11 +9,13 @@
         "JSON::Fast",
         "LWP::Simple",
         "Base64::Native",
-        "Data::Dump"
+        "Data::Dump",
+        "Slippy::Semilist"
     ],
     "test-depends" : [ "Test" ],
     "provides"     : {
-        "Verge::RPC::Client": "lib/Verge/RPC/Client.pm6"
+        "Verge::RPC::Client": "lib/Verge/RPC/Client.pm6",
+        "Verge::Helpers::Config": "lib/Verge/Helpers/Config.pm6"
     },
     "authors"      : [ "Harris Brakmic" ],
     "support"      : { "source"   : "git://github.com/brakmic/Perl6-Verge-Client.git" }

@@ -8,6 +8,7 @@ use JSON::Fast;
 use URI::Escape;
 use LWP::Simple;
 use Base64::Native;
+use Verge::Helpers::Config;
 
 # client for querying the public Verge REST API
 # https://vergecurrency.com/langs/en/#developers
@@ -21,14 +22,15 @@ class Client is export {
   has Str $!api;
   has Bool $.debug is rw = False;
   has UInt $!call_counter = 0;
+  has Config $!config;
 
-  multi method new(Str :$url, Str :$port = '20102', :$proto = 'http',
-                   Str :$user = 'user', Str :$password = 'password') {
-      return self.bless(:url($url), :port($port),
-                 :proto($proto), :user($user),
-                 :password($password));
-  }
-  submethod BUILD(:$!url, :$!port, :$!proto, :$!user, :$!password) {
+  submethod BUILD(Str :$url, Bool :$secure) {
+    $!config = Config.new;
+    $!url = $url;
+    $!user = $!config.get-value-for('rpcuser');
+    $!password = $!config.get-value-for('rpcpassword');
+    $!port = $!config.get-value-for('rpcport');
+    $!proto = $secure == True ?? 'https' !! 'http';
     $!auth_header = base64-encode($!user ~ ':' ~ $!password, :str);
     $!api = $!proto ~ '://' ~ $!url ~ ':' ~ $!port ~ '/';
   }
@@ -69,7 +71,6 @@ class Client is export {
      'params' => @method_params,
      'id' => $!call_counter++
     ;
-    say %params;
     return %params;
   }
   # componses HTTP call headers
@@ -81,6 +82,9 @@ class Client is export {
       'Content-Type' => 'application/json'
      ;
      return %headers;
+  }
+  method !get_config() {
+
   }
   # returns API command
   method !get_command($name) returns Str {
@@ -190,7 +194,6 @@ class Client is export {
                     walletpassphrasechange>;
       return %commands{$name};
   }
-
 }
 
 =begin pod
