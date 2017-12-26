@@ -36,35 +36,35 @@ class Client is export {
   }
   # execute API command
   method execute(Str $api, Str @params) returns Str {
-    given self!get_command($api) {
+    given self!get-command($api) {
       when 'gettransaction' {
-        return $.gettransaction(@params[0]);
+        return $.get-transaction(@params[0]);
       }
       when 'backupwallet' {
-        return $.backupwallet(@params[0]);
+        return $.backup-wallet(@params[0]);
       }
       when 'getblock' {
-        return $.getblock(@params);
+        return $.get-block(@params);
       }
     };
   }
   # API: get transaction information
-  method gettransaction(Str $tx-hash) returns Str {
+  method get-transaction(Str $tx-hash) returns Str {
     my @params = $tx-hash;
-    return LWP::Simple.new.post($!api, self!get_request_headers(),
-              to-json(self!get_request_parameters('gettransaction', @params)));
+    return LWP::Simple.new.post($!api, self!get-request-headers(),
+              to-json(self!get-request-parameters('gettransaction', @params)));
   }
   # API: creates a wallet backup (path can either be a full path or just a dir)
-  method backupwallet(Str $backup_path) returns Str {
+  method backup-wallet(Str $backup_path) returns Str {
     my @params = $backup_path;
-    return LWP::Simple.new.post($!api, self!get_request_headers(),
-                to-json(self!get_request_parameters('backupwallet', @params)));
+    return LWP::Simple.new.post($!api, self!get-request-headers(),
+                to-json(self!get-request-parameters('backupwallet', @params)));
   }
-  method getblock(Str @params) returns Str {
-    return LWP::Simple.new.post($!api, self!get_request_headers(),
-                    to-json(self!get_request_parameters('getblock', @params)));
+  method get-block(Str @params) returns Str {
+    return LWP::Simple.new.post($!api, self!get-request-headers(),
+                    to-json(self!get-request-parameters('getblock', @params)));
   }
-  method !get_request_parameters(Str $method, Str @method_params) {
+  method !get-request-parameters(Str $method, Str @method_params) {
     my %params =
      'version' => '1.1',
      'method' => $method,
@@ -74,7 +74,7 @@ class Client is export {
     return %params;
   }
   # componses HTTP call headers
-  method !get_request_headers() {
+  method !get-request-headers() {
      my %headers =
       'Host' => 'localhost',
       'User-Agent' => 'Perl6Client/0.1',
@@ -87,7 +87,7 @@ class Client is export {
 
   }
   # returns API command
-  method !get_command($name) returns Str {
+  method !get-command($name) returns Str {
     my %commands = <addmultisigaddress
                     addmultisigaddress
                     backupwallet
