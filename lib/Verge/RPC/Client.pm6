@@ -63,10 +63,12 @@ class Client is export {
     return LWP::Simple.new.post($!api, self!get-request-headers(),
                 to-json(self!get-request-parameters('backupwallet', @params)));
   }
+  # API: get block information (add "True" as second parameter for more details)
   method get-block(*@params) returns Str {
     return LWP::Simple.new.post($!api, self!get-request-headers(),
                     to-json(self!get-request-parameters('getblock', @params)));
   }
+  # API: get current client/network information
   method get-info() returns Str {
     return LWP::Simple.new.post($!api, self!get-request-headers(),
                     to-json(self!get-request-parameters('getinfo')));
