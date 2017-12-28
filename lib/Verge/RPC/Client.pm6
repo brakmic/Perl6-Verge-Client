@@ -47,7 +47,13 @@ class Client is export {
         return $.get-block(@params);
       }
       when 'getinfo' {
-        return $.get-info();
+        return $.get-info(@params);
+      }
+      when 'getaccount' {
+        return $.get-account(@params);
+      }
+      when 'getbalance' {
+        return $.get-balance(@params);
       }
     };
   }
@@ -72,6 +78,15 @@ class Client is export {
   method get-info() returns Str {
     return LWP::Simple.new.post($!api, self!get-request-headers(),
                     to-json(self!get-request-parameters('getinfo')));
+  }
+  # API: get address info
+  method get-account(*@params) returns Str {
+    return LWP::Simple.new.post($!api, self!get-request-headers(),
+                    to-json(self!get-request-parameters('getaccount', @params)));
+  }
+  method get-balance(*@params) returns Str {
+    return LWP::Simple.new.post($!api, self!get-request-headers(),
+                    to-json(self!get-request-parameters('getbalance', @params)));
   }
   method !get-request-parameters(Str $method, *@method_params) {
     my %params =
