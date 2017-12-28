@@ -36,58 +36,11 @@ class Client is export {
   }
   # execute API command
   method execute(Str $api, *@params) returns Str {
-    given self!get-command($api) {
-      when 'gettransaction' {
-        return $.get-transaction(@params[0]);
-      }
-      when 'backupwallet' {
-        return $.backup-wallet(@params[0]);
-      }
-      when 'getblock' {
-        return $.get-block(@params);
-      }
-      when 'getinfo' {
-        return $.get-info(@params);
-      }
-      when 'getaccount' {
-        return $.get-account(@params);
-      }
-      when 'getbalance' {
-        return $.get-balance(@params);
-      }
-    };
-  }
-  # API: get transaction information
-  method get-transaction(Str $tx-hash) returns Str {
-    my @params = $tx-hash;
-    return LWP::Simple.new.post($!api, self!get-request-headers(),
-              to-json(self!get-request-parameters('gettransaction', @params)));
-  }
-  # API: creates a wallet backup (path can either be a full path or just a dir)
-  method backup-wallet(Str $backup_path) returns Str {
-    my @params = $backup_path;
-    return LWP::Simple.new.post($!api, self!get-request-headers(),
-                to-json(self!get-request-parameters('backupwallet', @params)));
-  }
-  # API: get block information (add "True" as second parameter for more details)
-  method get-block(*@params) returns Str {
-    return LWP::Simple.new.post($!api, self!get-request-headers(),
-                    to-json(self!get-request-parameters('getblock', @params)));
-  }
-  # API: get current client/network information
-  method get-info() returns Str {
-    return LWP::Simple.new.post($!api, self!get-request-headers(),
-                    to-json(self!get-request-parameters('getinfo')));
-  }
-  # API: returns the name of the account associated with the given address
-  method get-account(*@params) returns Str {
-    return LWP::Simple.new.post($!api, self!get-request-headers(),
-                    to-json(self!get-request-parameters('getaccount', @params)));
-  }
-  # API: gets the balance in decimal bitcoins across all accounts or for a particular account
-  method get-balance(*@params) returns Str {
-    return LWP::Simple.new.post($!api, self!get-request-headers(),
-                    to-json(self!get-request-parameters('getbalance', @params)));
+    my Str $call = self!get-command($api);
+    given $call ne '' {
+      return LWP::Simple.new.post($!api, self!get-request-headers(),
+                to-json(self!get-request-parameters($call, @params)));
+    }
   }
   method !get-request-parameters(Str $method, *@method_params) {
     my %params =
@@ -107,9 +60,6 @@ class Client is export {
       'Content-Type' => 'application/json'
      ;
      return %headers;
-  }
-  method !get_config() {
-
   }
   # returns API command
   method !get-command($name) returns Str {
@@ -135,6 +85,8 @@ class Client is export {
                     getbalance
                     getblock
                     getblock
+                    getblockbynumber
+                    getblockbynumber
                     getblockcount
                     getblockcount
                     getblockhash
