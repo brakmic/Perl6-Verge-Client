@@ -79,11 +79,12 @@ class Client is export {
     return LWP::Simple.new.post($!api, self!get-request-headers(),
                     to-json(self!get-request-parameters('getinfo')));
   }
-  # API: get address info
+  # API: returns the name of the account associated with the given address
   method get-account(*@params) returns Str {
     return LWP::Simple.new.post($!api, self!get-request-headers(),
                     to-json(self!get-request-parameters('getaccount', @params)));
   }
+  # API: gets the balance in decimal bitcoins across all accounts or for a particular account
   method get-balance(*@params) returns Str {
     return LWP::Simple.new.post($!api, self!get-request-headers(),
                     to-json(self!get-request-parameters('getbalance', @params)));
