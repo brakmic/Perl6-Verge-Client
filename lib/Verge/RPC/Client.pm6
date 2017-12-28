@@ -35,7 +35,7 @@ class Client is export {
     $!api = $!proto ~ '://' ~ $!url ~ ':' ~ $!port ~ '/';
   }
   # execute API command
-  method execute(Str $api, Str @params = Array[Str].new) returns Str {
+  method execute(Str $api, *@params) returns Str {
     given self!get-command($api) {
       when 'gettransaction' {
         return $.get-transaction(@params[0]);
@@ -63,7 +63,7 @@ class Client is export {
     return LWP::Simple.new.post($!api, self!get-request-headers(),
                 to-json(self!get-request-parameters('backupwallet', @params)));
   }
-  method get-block(Str @params) returns Str {
+  method get-block(*@params) returns Str {
     return LWP::Simple.new.post($!api, self!get-request-headers(),
                     to-json(self!get-request-parameters('getblock', @params)));
   }
@@ -71,7 +71,7 @@ class Client is export {
     return LWP::Simple.new.post($!api, self!get-request-headers(),
                     to-json(self!get-request-parameters('getinfo')));
   }
-  method !get-request-parameters(Str $method, Str @method_params = Array[Str].new) {
+  method !get-request-parameters(Str $method, *@method_params) {
     my %params =
      'version' => '1.1',
      'method' => $method,
